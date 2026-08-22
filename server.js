@@ -74,8 +74,31 @@ app.post('/webhook', async (req, res) => {
         console.error('handleTextMessage error:', err)
       );
     }
+    if (event.type === 'follow') {
+      handleFollow(event).catch((err) =>
+        console.error('handleFollow error:', err)
+      );
+    }
   }
 });
+
+async function handleFollow(event) {
+  const userId = event.source.userId;
+  const displayName = await getDisplayName(userId);
+
+  const welcomeText =
+    'สวัสดีครับ 👋 นี่คือบัญชีทางการของ GOSEC\n' +
+    'ขอบคุณที่เป็นเพื่อนกับเรา 🙏\n\n' +
+    'เราคือองค์กรความปลอดภัยทางไซเบอร์ขั้นสูง\n' +
+    '"รู้ก่อน ตัดก่อน ปลอดภัยกว่า"';
+
+  await replyMessagesToLine(event.replyToken, [
+    { type: 'text', text: welcomeText },
+    buildVideoFlexMessage(),
+  ]);
+
+  await logMessage(userId, displayName, 'bot', '[ข้อความต้อนรับเพื่อนใหม่ + การ์ดวิดีโอ]');
+}
 
 function verifySignature(req) {
   const signature = req.headers['x-line-signature'];
@@ -87,7 +110,7 @@ function verifySignature(req) {
   return hash === signature;
 }
 
-// คำที่ลูกค้าพิมพ์แล้วให้ส่งการ์ดตัวอย่างทันที (ไม่ผ่าน Claude)
+// คำที่ลูกค้าพิมพ์แล้วให้ส่งลิงก์ตัวอย่างทันที (ไม่ผ่าน Claude)
 const VIDEO_KEYWORDS = [
   'ตัวอย่าง', 'ตย', 'ตัวอยาง', 'ตัวอยาก',
   'คลิปตัวอย่าง', 'วิดีโอตัวอย่าง', 'วิดีโอ', 'วิดิโอ', 'คลิป',
@@ -273,12 +296,44 @@ async function replyMessagesToLine(replyToken, messages) {
   });
 }
 
-// เรียก URL นี้ครั้งเดียวหลัง deploy เพื่อสร้าง+ตั้งค่า Rich Menu อัตโนมัติ
+// เรียก URL นี้ครั้งเดียวหลัง deploy เพื่อสร้าง+ตั้งค่า Rich Menu อัตโนมัติ (6 ปุ่ม)
 app.get('/setup-richmenu', async (req, res) => {
   try {
     const websiteUrl = process.env.WEBSITE_URL || 'https://www.gosec.one';
     const imageUrl =
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/richmenu.png';
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/richmenu6.png';
+
+    const colW = Math.floor(2500 / 3); // 833
+    const rowH = 843;
+
+    const areas = [
+      // แถวบน (สีน้ำเงิน)
+      {
+        bounds: { x: 0, y: 0, width: colW, height: rowH },
+        action: { type: 'uri', label: 'เว็บไซต์', uri: websiteUrl },
+      },
+      {
+        bounds: { x: colW, y: 0, width: colW, height: rowH },
+        action: { type: 'message', label: 'ข่าวสาร', text: 'มีข่าวสารอะไรใหม่บ้างครับ' },
+      },
+      {
+        bounds: { x: colW * 2, y: 0, width: 2500 - colW * 2, height: rowH },
+        action: { type: 'message', label: 'สินค้าเรา', text: 'มีสินค้าและบริการอะไรบ้างครับ' },
+      },
+      // แถวล่าง (สีขาว)
+      {
+        bounds: { x: 0, y: rowH, width: colW, height: rowH },
+        action: { type: 'message', label: 'ติดต่อฝ่ายขาย', text: 'ขอติดต่อฝ่ายขายครับ' },
+      },
+      {
+        bounds: { x: colW, y: rowH, width: colW, height: rowH },
+        action: { type: 'message', label: 'Q&A', text: 'มีคำถามอยากสอบถามครับ' },
+      },
+      {
+        bounds: { x: colW * 2, y: rowH, width: 2500 - colW * 2, height: rowH },
+        action: { type: 'message', label: 'ติดต่อเรา', text: 'ขอเบอร์ติดต่อและที่อยู่บริษัทครับ' },
+      },
+    ];
 
     // 1) สร้าง Rich Menu
     const createRes = await fetch('https://api.line.me/v2/bot/richmenu', {
@@ -288,16 +343,11 @@ app.get('/setup-richmenu', async (req, res) => {
         Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
       },
       body: JSON.stringify({
-        size: { width: 2500, height: 843 },
+        size: { width: 2500, height: 1686 },
         selected: true,
-        name: 'GOSEC main menu',
+        name: 'GOSEC main menu (6 buttons)',
         chatBarText: 'เมนู',
-        areas: [
-          {
-            bounds: { x: 0, y: 0, width: 2500, height: 843 },
-            action: { type: 'uri', label: 'เยี่ยมชมเว็บไซต์', uri: websiteUrl },
-          },
-        ],
+        areas,
       }),
     });
     const created = await createRes.json();
