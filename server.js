@@ -273,4 +273,77 @@ async function replyMessagesToLine(replyToken, messages) {
   });
 }
 
+// เรียก URL นี้ครั้งเดียวหลัง deploy เพื่อสร้าง+ตั้งค่า Rich Menu อัตโนมัติ
+app.get('/setup-richmenu', async (req, res) => {
+  try {
+    const websiteUrl = process.env.WEBSITE_URL || 'https://www.gosec.one';
+    const imageUrl =
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/richmenu.png';
+
+    // 1) สร้าง Rich Menu
+    const createRes = await fetch('https://api.line.me/v2/bot/richmenu', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        size: { width: 2500, height: 843 },
+        selected: true,
+        name: 'GOSEC main menu',
+        chatBarText: 'เมนู',
+        areas: [
+          {
+            bounds: { x: 0, y: 0, width: 2500, height: 843 },
+            action: { type: 'uri', label: 'เยี่ยมชมเว็บไซต์', uri: websiteUrl },
+          },
+        ],
+      }),
+    });
+    const created = await createRes.json();
+    if (!createRes.ok) {
+      return res.status(500).json({ step: 'create', error: created });
+    }
+    const richMenuId = created.richMenuId;
+
+    // 2) อัปโหลดภาพ
+    const imageRes = await fetch(imageUrl);
+    const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
+    const uploadRes = await fetch(
+      `https://api-data.line.me/v2/bot/richmenu/${richMenuId}/content`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'image/png',
+          Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
+        },
+        body: imageBuffer,
+      }
+    );
+    if (!uploadRes.ok) {
+      return res
+        .status(500)
+        .json({ step: 'upload', error: await uploadRes.text() });
+    }
+
+    // 3) ตั้งเป็นเมนูเริ่มต้นให้ทุกคน
+    const defaultRes = await fetch(
+      `https://api.line.me/v2/bot/user/all/richmenu/${richMenuId}`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}` },
+      }
+    );
+    if (!defaultRes.ok) {
+      return res
+        .status(500)
+        .json({ step: 'set-default', error: await defaultRes.text() });
+    }
+
+    res.json({ success: true, richMenuId, websiteUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`gosec-oa-bot listening on port ${PORT}`));
