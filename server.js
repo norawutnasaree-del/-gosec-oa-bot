@@ -87,7 +87,7 @@ function verifySignature(req) {
   return hash === signature;
 }
 
-// คำที่ลูกค้าพิมพ์แล้วให้ส่งลิงก์ตัวอย่างทันที (ไม่ผ่าน Claude)
+// คำที่ลูกค้าพิมพ์แล้วให้ส่งการ์ดตัวอย่างทันที (ไม่ผ่าน Claude)
 const VIDEO_KEYWORDS = [
   'ตัวอย่าง', 'ตย', 'ตัวอยาง', 'ตัวอยาก',
   'คลิปตัวอย่าง', 'วิดีโอตัวอย่าง', 'วิดีโอ', 'วิดิโอ', 'คลิป',
@@ -102,6 +102,86 @@ function isAskingForVideo(text) {
   return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
 }
 
+// สร้างการ์ด Flex Message สไตล์ดำ-ทอง เหมือนหน้าพรีเมียม
+function buildVideoFlexMessage() {
+  return {
+    type: 'flex',
+    altText: 'ตัวอย่างที่คุณขอชม — GOSEC',
+    contents: {
+      type: 'bubble',
+      size: 'kilo',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '24px',
+        spacing: 'md',
+        contents: [
+          {
+            type: 'text',
+            text: 'GOSEC · PRIVATE PREVIEW',
+            color: '#B8935A',
+            size: 'xs',
+            weight: 'bold',
+            align: 'center',
+          },
+          {
+            type: 'separator',
+            color: '#B8935A55',
+            margin: 'md',
+          },
+          {
+            type: 'text',
+            text: 'ตัวอย่างที่คุณขอชม',
+            color: '#F3EFE6',
+            size: 'xl',
+            weight: 'bold',
+            align: 'center',
+            margin: 'lg',
+            wrap: true,
+          },
+          {
+            type: 'text',
+            text: 'รับชมได้ทันทีในหน้าเดียว\nไม่ต้องดาวน์โหลด ไม่ต้องสมัครสมาชิก',
+            color: '#8B8FA0',
+            size: 'sm',
+            align: 'center',
+            wrap: true,
+            margin: 'sm',
+          },
+        ],
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '20px',
+        spacing: 'sm',
+        contents: [
+          {
+            type: 'button',
+            style: 'primary',
+            color: '#B8935A',
+            action: {
+              type: 'uri',
+              label: 'รับชมวิดีโอ',
+              uri: VIDEO_PAGE_URL,
+            },
+          },
+          {
+            type: 'text',
+            text: 'เอกสิทธิ์เฉพาะลูกค้าที่ติดต่อผ่าน GOSEC',
+            color: '#8B8FA0',
+            size: 'xxs',
+            align: 'center',
+            margin: 'md',
+          },
+        ],
+      },
+    },
+  };
+}
+
 async function handleTextMessage(event) {
   const userId = event.source.userId;
   const userMessage = event.message.text;
@@ -109,11 +189,16 @@ async function handleTextMessage(event) {
 
   await logMessage(userId, displayName, 'user', userMessage);
 
-  const botReply = isAskingForVideo(userMessage)
-    ? `มีตัวอย่างให้ชมเลยครับ 🎬\n${VIDEO_PAGE_URL}`
-    : await askClaude(userMessage);
+  if (isAskingForVideo(userMessage)) {
+    await replyMessagesToLine(event.replyToken, [buildVideoFlexMessage()]);
+    await logMessage(userId, displayName, 'bot', '[ส่งการ์ดตัวอย่างวิดีโอ]');
+    return;
+  }
 
-  await replyToLine(event.replyToken, botReply);
+  const botReply = await askClaude(userMessage);
+  await replyMessagesToLine(event.replyToken, [
+    { type: 'text', text: botReply },
+  ]);
   await logMessage(userId, displayName, 'bot', botReply);
 }
 
@@ -174,7 +259,7 @@ async function askClaude(userMessage) {
   }
 }
 
-async function replyToLine(replyToken, text) {
+async function replyMessagesToLine(replyToken, messages) {
   await fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'POST',
     headers: {
@@ -183,7 +268,7 @@ async function replyToLine(replyToken, text) {
     },
     body: JSON.stringify({
       replyToken,
-      messages: [{ type: 'text', text }],
+      messages,
     }),
   });
 }
