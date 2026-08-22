@@ -1,0 +1,16 @@
+{
+  "name": "gosec-oa-bot",
+  "version": "1.0.0",
+  "description": "LINE OA webhook bot for GOSEC - answers customers via Anthropic API, logs every conversation to Supabase",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@supabase/supabase-js": "^2.45.4"
+  }
+}
