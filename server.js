@@ -87,6 +87,21 @@ function verifySignature(req) {
   return hash === signature;
 }
 
+// คำที่ลูกค้าพิมพ์แล้วให้ส่งลิงก์ตัวอย่างทันที (ไม่ผ่าน Claude)
+const VIDEO_KEYWORDS = [
+  'ตัวอย่าง', 'ตย', 'ตัวอยาง', 'ตัวอยาก',
+  'คลิปตัวอย่าง', 'วิดีโอตัวอย่าง', 'วิดีโอ', 'วิดิโอ', 'คลิป',
+  'ดูวิดีโอ', 'ขอดูวิดีโอ', 'ขอคลิป', 'มีคลิปไหม', 'มีคลิปให้ดูไหม',
+  'sample', 'example',
+];
+
+const VIDEO_PAGE_URL =
+  'https://cdn.jsdelivr.net/gh/norawutnasaree-del/-gosec-preview@main/index.html';
+
+function isAskingForVideo(text) {
+  return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
+}
+
 async function handleTextMessage(event) {
   const userId = event.source.userId;
   const userMessage = event.message.text;
@@ -94,7 +109,9 @@ async function handleTextMessage(event) {
 
   await logMessage(userId, displayName, 'user', userMessage);
 
-  const botReply = await askClaude(userMessage);
+  const botReply = isAskingForVideo(userMessage)
+    ? `มีตัวอย่างให้ชมเลยครับ 🎬\n${VIDEO_PAGE_URL}`
+    : await askClaude(userMessage);
 
   await replyToLine(event.replyToken, botReply);
   await logMessage(userId, displayName, 'bot', botReply);
