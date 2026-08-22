@@ -96,7 +96,7 @@ const VIDEO_KEYWORDS = [
 ];
 
 const VIDEO_PAGE_URL =
-  'https://cdn.jsdelivr.net/gh/norawutnasaree-del/-gosec-preview@main/index.html';
+  'https://htmlpreview.github.io/?https://github.com/norawutnasaree-del/-gosec-preview/blob/main/index.html';
 
 function isAskingForVideo(text) {
   return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
