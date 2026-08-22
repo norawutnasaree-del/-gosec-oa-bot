@@ -396,4 +396,20 @@ app.get('/setup-richmenu', async (req, res) => {
   }
 });
 
+// เรียก URL นี้ครั้งเดียว เพื่อยกเลิก Rich Menu จากโค้ด ให้กลับไปใช้ตัวที่ตั้งไว้ใน OA Manager แทน
+app.get('/unset-richmenu', async (req, res) => {
+  try {
+    const result = await fetch('https://api.line.me/v2/bot/user/all/richmenu', {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}` },
+    });
+    if (!result.ok) {
+      return res.status(500).json({ error: await result.text() });
+    }
+    res.json({ success: true, message: 'ยกเลิก Rich Menu จากโค้ดแล้ว ตอนนี้จะใช้ตัวจาก OA Manager แทน' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`gosec-oa-bot listening on port ${PORT}`));
