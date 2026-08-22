@@ -118,8 +118,7 @@ const VIDEO_KEYWORDS = [
   'sample', 'example',
 ];
 
-const VIDEO_PAGE_URL =
-  'https://htmlpreview.github.io/?https://github.com/norawutnasaree-del/-gosec-preview/blob/main/index.html';
+const VIDEO_PAGE_URL = 'https://norawutnasaree-del.github.io/-gosec-preview/';
 
 function isAskingForVideo(text) {
   return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
