@@ -378,15 +378,105 @@ function buildProductsFlexMessage() {
   };
 }
 
-// เช็คว่าลูกค้ากดสินค้าตัวไหน แล้วคืนคำตอบเฉพาะสินค้านั้น
-function findProductReply(text) {
+// ลิงก์วิดีโอเฉพาะสินค้าบางตัว (ถ้ามี) — กดปุ่มในการ์ดแทนโชว์ลิงก์เป็นตัวหนังสือ
+const PRODUCT_VIDEO_LINKS = {
+  'Gosec by CTMR': 'https://youtu.be/0Ao_ilsMij4?feature=shared',
+};
+
+// การ์ดวิดีโอสไตล์ดำ-ทอง สำหรับสินค้าที่มีวิดีโอแนะนำโดยเฉพาะ
+function buildProductVideoFlexMessage(product, videoUrl) {
+  return {
+    type: 'flex',
+    altText: `วิดีโอแนะนำ ${product.name} — GOSEC`,
+    contents: {
+      type: 'bubble',
+      size: 'kilo',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '24px',
+        spacing: 'md',
+        contents: [
+          {
+            type: 'text',
+            text: 'GOSEC · PRODUCT VIDEO',
+            color: '#B8935A',
+            size: 'xs',
+            weight: 'bold',
+            align: 'center',
+          },
+          {
+            type: 'separator',
+            color: '#B8935A55',
+            margin: 'md',
+          },
+          {
+            type: 'text',
+            text: product.name,
+            color: '#F3EFE6',
+            size: 'xl',
+            weight: 'bold',
+            align: 'center',
+            margin: 'lg',
+            wrap: true,
+          },
+          {
+            type: 'text',
+            text: product.description,
+            color: '#8B8FA0',
+            size: 'sm',
+            align: 'center',
+            wrap: true,
+            margin: 'sm',
+          },
+        ],
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '20px',
+        spacing: 'sm',
+        contents: [
+          {
+            type: 'button',
+            style: 'primary',
+            color: '#B8935A',
+            action: {
+              type: 'uri',
+              label: 'ดูวิดีโอแนะนำ',
+              uri: videoUrl,
+            },
+          },
+          {
+            type: 'text',
+            text: 'สอบถามเพิ่มเติม 096-253-9287',
+            color: '#8B8FA0',
+            size: 'xxs',
+            align: 'center',
+            margin: 'md',
+          },
+        ],
+      },
+    },
+  };
+}
+
+// เช็คว่าลูกค้ากดสินค้าตัวไหน แล้วคืนสิ่งที่จะตอบ (การ์ดวิดีโอ ถ้ามี / ข้อความปกติ ถ้าไม่มี)
+function findProductResponse(text) {
   const product = PRODUCTS.find((p) => text === `สนใจสินค้า ${p.name}`);
   if (!product) return null;
 
-  return (
+  const videoUrl = PRODUCT_VIDEO_LINKS[product.name];
+  if (videoUrl) {
+    return { type: 'flex', flex: buildProductVideoFlexMessage(product, videoUrl) };
+  }
+
+  const replyText =
     `หากสนใจสินค้า ${product.name} นี้ มันคือ${product.description}\n\n` +
-    `หากต้องการทราบรายละเอียดเพิ่มเติมติดต่อสอบถามได้ที่ 096-253-9287 หรือ info@gosec.one ครับ`
-  );
+    `หากต้องการทราบรายละเอียดเพิ่มเติมติดต่อสอบถามได้ที่ 096-253-9287 หรือ info@gosec.one ครับ`;
+  return { type: 'text', text: replyText };
 }
 
 async function handleTextMessage(event) {
@@ -397,12 +487,17 @@ async function handleTextMessage(event) {
   await logMessage(userId, displayName, 'user', userMessage);
 
   // 1) ลูกค้ากดรูปสินค้าตัวใดตัวหนึ่ง (ต้องเช็คก่อนตัวอื่น เพราะข้อความมีคำว่า "สินค้า" ปนอยู่)
-  const productReply = findProductReply(userMessage);
-  if (productReply) {
-    await replyMessagesToLine(event.replyToken, [
-      { type: 'text', text: productReply },
-    ]);
-    await logMessage(userId, displayName, 'bot', productReply);
+  const productResponse = findProductResponse(userMessage);
+  if (productResponse) {
+    if (productResponse.type === 'flex') {
+      await replyMessagesToLine(event.replyToken, [productResponse.flex]);
+      await logMessage(userId, displayName, 'bot', '[ส่งการ์ดวิดีโอสินค้า]');
+    } else {
+      await replyMessagesToLine(event.replyToken, [
+        { type: 'text', text: productResponse.text },
+      ]);
+      await logMessage(userId, displayName, 'bot', productResponse.text);
+    }
     return;
   }
 
