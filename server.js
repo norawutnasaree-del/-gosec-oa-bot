@@ -305,6 +305,59 @@ function buildSalesFlexMessage() {
   };
 }
 
+// ===== ข่าวสาร 3 ข่าว =====
+const NEWS_KEYWORDS = ['ข่าวสาร', 'ดูข่าว', 'มีข่าว', 'ข่าว'];
+
+function isAskingForNews(text) {
+  return NEWS_KEYWORDS.some((kw) => text.includes(kw));
+}
+
+const NEWS_ITEMS = [
+  {
+    title: 'เตือนภัยแจ้งข่าว ภัยไซเบอร์ใกล้ตัว โดย อดีต พตท.ทักษิณ ชินวัตร',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/news1.jpg',
+    link: 'https://youtu.be/R8yUUPLG0U8?feature=shared',
+  },
+  {
+    title:
+      'จัดอบรมเชิงปฏิบัติการการพัฒนาคุณภาพเทคโนโลยีด้านความปลอดภัยทางไซเบอร์ โดย GoSec by CTMR',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/news2.jpg',
+    link: 'https://www.vijaikhao.com/2026/01/gosec-by-ctmr.html',
+  },
+  {
+    title:
+      'เปิดโครงการ "GoSec (CTMR)" ดึงผู้เชี่ยวชาญระดับประเทศ ติวเข้ม 25 โรงพยาบาล เสริมเกราะไซเบอร์ขั้นสูง ยกระดับความปลอดภัยข้อมูลสุขภาพ',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/news3.jpg',
+    link: 'https://mgronline.com/qol/detail/9690000033901',
+  },
+];
+
+// การ์ด Carousel รูปข่าวล้วนๆ กดรูปแล้วเปิดลิงก์ข่าวนั้นทันที
+function buildNewsFlexMessage() {
+  return {
+    type: 'flex',
+    altText: 'ข่าวสารล่าสุดจาก GOSEC',
+    contents: {
+      type: 'carousel',
+      contents: NEWS_ITEMS.map((n) => ({
+        type: 'bubble',
+        size: 'kilo',
+        hero: {
+          type: 'image',
+          url: n.imageUrl,
+          size: 'full',
+          aspectRatio: '1:1',
+          aspectMode: 'cover',
+          action: { type: 'uri', label: n.title.slice(0, 40), uri: n.link },
+        },
+      })),
+    },
+  };
+}
+
 // ===== สินค้า 6 ตัว =====
 const PRODUCT_LIST_KEYWORDS = ['สินค้าเรา', 'มีสินค้า', 'ดูสินค้า', 'สินค้าและบริการ', 'สินค้า'];
 
@@ -515,14 +568,21 @@ async function handleTextMessage(event) {
     return;
   }
 
-  // 4) ขอดูรายการสินค้าทั้งหมด
+  // 4) ขอดูข่าวสาร
+  if (isAskingForNews(userMessage)) {
+    await replyMessagesToLine(event.replyToken, [buildNewsFlexMessage()]);
+    await logMessage(userId, displayName, 'bot', '[ส่งการ์ดข่าวสาร]');
+    return;
+  }
+
+  // 5) ขอดูรายการสินค้าทั้งหมด
   if (isAskingForProductList(userMessage)) {
     await replyMessagesToLine(event.replyToken, [buildProductsFlexMessage()]);
     await logMessage(userId, displayName, 'bot', '[ส่งการ์ดรายการสินค้า]');
     return;
   }
 
-  // 5) คำถามทั่วไป ให้ Claude ตอบ
+  // 6) คำถามทั่วไป ให้ Claude ตอบ
   const botReply = await askClaude(userMessage);
   await replyMessagesToLine(event.replyToken, [
     { type: 'text', text: botReply },
