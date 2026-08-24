@@ -110,7 +110,7 @@ function verifySignature(req) {
   return hash === signature;
 }
 
-// คำที่ลูกค้าพิมพ์แล้วให้ส่งลิงก์ตัวอย่างทันที (ไม่ผ่าน Claude)
+// ===== วิดีโอตัวอย่าง =====
 const VIDEO_KEYWORDS = [
   'ตัวอย่าง', 'ตย', 'ตัวอยาง', 'ตัวอยาก',
   'คลิปตัวอย่าง', 'วิดีโอตัวอย่าง', 'วิดีโอ', 'วิดิโอ', 'คลิป',
@@ -124,28 +124,106 @@ function isAskingForVideo(text) {
   return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
 }
 
-// คำที่ลูกค้าพิมพ์ (หรือกดปุ่มริชเมนู "เลือกเซลล์") แล้วให้ส่งการ์ดเซลล์ทันที
+function buildVideoFlexMessage() {
+  return {
+    type: 'flex',
+    altText: 'ตัวอย่างที่คุณขอชม — GOSEC',
+    contents: {
+      type: 'bubble',
+      size: 'kilo',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '24px',
+        spacing: 'md',
+        contents: [
+          {
+            type: 'text',
+            text: 'GOSEC · PRIVATE PREVIEW',
+            color: '#B8935A',
+            size: 'xs',
+            weight: 'bold',
+            align: 'center',
+          },
+          {
+            type: 'separator',
+            color: '#B8935A55',
+            margin: 'md',
+          },
+          {
+            type: 'text',
+            text: 'ตัวอย่างที่คุณขอชม',
+            color: '#F3EFE6',
+            size: 'xl',
+            weight: 'bold',
+            align: 'center',
+            margin: 'lg',
+            wrap: true,
+          },
+          {
+            type: 'text',
+            text: 'รับชมได้ทันทีในหน้าเดียว\nไม่ต้องดาวน์โหลด ไม่ต้องสมัครสมาชิก',
+            color: '#8B8FA0',
+            size: 'sm',
+            align: 'center',
+            wrap: true,
+            margin: 'sm',
+          },
+        ],
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#0A0C14',
+        paddingAll: '20px',
+        spacing: 'sm',
+        contents: [
+          {
+            type: 'button',
+            style: 'primary',
+            color: '#B8935A',
+            action: {
+              type: 'uri',
+              label: 'รับชมวิดีโอ',
+              uri: VIDEO_PAGE_URL,
+            },
+          },
+          {
+            type: 'text',
+            text: 'เอกสิทธิ์เฉพาะลูกค้าที่ติดต่อผ่าน GOSEC',
+            color: '#8B8FA0',
+            size: 'xxs',
+            align: 'center',
+            margin: 'md',
+          },
+        ],
+      },
+    },
+  };
+}
+
+// ===== เลือกเซลล์ =====
 const SALES_KEYWORDS = ['เลือกเซลล์', 'ติดต่อฝ่ายขาย', 'ขอเซลล์', 'ขอติดต่อฝ่ายขาย'];
 
 function isAskingForSales(text) {
   return SALES_KEYWORDS.some((kw) => text.includes(kw));
 }
 
-// สร้างการ์ด Flex Carousel รูปเซลล์ กดรูปแล้วเปิดลิงก์เพิ่มเพื่อน LINE
 function buildSalesFlexMessage() {
   const salesReps = [
     {
       name: 'เสาวลักษณ์ (ขวัญ)',
       lastName: 'ศิริมาวัชรพล',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/1.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales1.jpg.jpg',
       lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
     },
     {
       name: 'นางสาวนฤทัย ทนอุป',
       lastName: '(หนุงหนิง)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/2.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales2.jpg.jpg',
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
   ];
@@ -227,84 +305,88 @@ function buildSalesFlexMessage() {
   };
 }
 
-// สร้างการ์ด Flex Message สไตล์ดำ-ทอง เหมือนหน้าพรีเมียม
-function buildVideoFlexMessage() {
+// ===== สินค้า 6 ตัว =====
+const PRODUCT_LIST_KEYWORDS = ['สินค้าเรา', 'มีสินค้า', 'ดูสินค้า', 'สินค้าและบริการ'];
+
+function isAskingForProductList(text) {
+  return PRODUCT_LIST_KEYWORDS.some((kw) => text.includes(kw));
+}
+
+const PRODUCTS = [
+  {
+    name: 'Gosec by CTMR',
+    description: 'กรอบความมั่นคงปลอดภัยไซเบอร์',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/1.jpg',
+  },
+  {
+    name: 'Omnix VCR',
+    description: 'ห้องประชุมและบัญชาการออนไลน์',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/2.jpg',
+  },
+  {
+    name: 'Omnix Sync',
+    description: 'ระบบรวมฐานข้อมูลของ อบจ.',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/3.jpg',
+  },
+  {
+    name: 'Omnix Sentra',
+    description: 'ระบบรวมกล้องวงจรปิดและ AI CCTV',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/4.jpg',
+  },
+  {
+    name: 'Omnix Stream',
+    description: 'ระบบถ่ายทอดสด และสื่อสารสาธารณะ',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/5.jpg',
+  },
+  {
+    name: 'Omnix Wireless Lastmile',
+    description: 'เครือข่ายวงจรปิดถึงบ้านผู้ป่วย',
+    imageUrl:
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/6.jpg',
+  },
+];
+
+// การ์ด Carousel รูปสินค้าล้วนๆ (ไม่มีข้อความทับ) กดรูปแล้วบอทตอบรายละเอียดสินค้านั้น
+function buildProductsFlexMessage() {
   return {
     type: 'flex',
-    altText: 'ตัวอย่างที่คุณขอชม — GOSEC',
+    altText: 'สินค้าและบริการของ GOSEC',
     contents: {
-      type: 'bubble',
-      size: 'kilo',
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#0A0C14',
-        paddingAll: '24px',
-        spacing: 'md',
-        contents: [
-          {
-            type: 'text',
-            text: 'GOSEC · PRIVATE PREVIEW',
-            color: '#B8935A',
-            size: 'xs',
-            weight: 'bold',
-            align: 'center',
+      type: 'carousel',
+      contents: PRODUCTS.map((p) => ({
+        type: 'bubble',
+        size: 'kilo',
+        hero: {
+          type: 'image',
+          url: p.imageUrl,
+          size: 'full',
+          aspectRatio: '1:1',
+          aspectMode: 'cover',
+          action: {
+            type: 'message',
+            label: p.name,
+            text: `สนใจสินค้า ${p.name}`,
           },
-          {
-            type: 'separator',
-            color: '#B8935A55',
-            margin: 'md',
-          },
-          {
-            type: 'text',
-            text: 'ตัวอย่างที่คุณขอชม',
-            color: '#F3EFE6',
-            size: 'xl',
-            weight: 'bold',
-            align: 'center',
-            margin: 'lg',
-            wrap: true,
-          },
-          {
-            type: 'text',
-            text: 'รับชมได้ทันทีในหน้าเดียว\nไม่ต้องดาวน์โหลด ไม่ต้องสมัครสมาชิก',
-            color: '#8B8FA0',
-            size: 'sm',
-            align: 'center',
-            wrap: true,
-            margin: 'sm',
-          },
-        ],
-      },
-      footer: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#0A0C14',
-        paddingAll: '20px',
-        spacing: 'sm',
-        contents: [
-          {
-            type: 'button',
-            style: 'primary',
-            color: '#B8935A',
-            action: {
-              type: 'uri',
-              label: 'รับชมวิดีโอ',
-              uri: VIDEO_PAGE_URL,
-            },
-          },
-          {
-            type: 'text',
-            text: 'เอกสิทธิ์เฉพาะลูกค้าที่ติดต่อผ่าน GOSEC',
-            color: '#8B8FA0',
-            size: 'xxs',
-            align: 'center',
-            margin: 'md',
-          },
-        ],
-      },
+        },
+      })),
     },
   };
+}
+
+// เช็คว่าลูกค้ากดสินค้าตัวไหน แล้วคืนคำตอบเฉพาะสินค้านั้น
+function findProductReply(text) {
+  const product = PRODUCTS.find((p) => text === `สนใจสินค้า ${p.name}`);
+  if (!product) return null;
+
+  return (
+    `หากสนใจสินค้า ${product.name} นี้ มันคือ${product.description}\n\n` +
+    `หากต้องการทราบรายละเอียดเพิ่มเติมติดต่อสอบถามได้ที่ 096-253-9287 หรือ info@gosec.one ครับ`
+  );
 }
 
 async function handleTextMessage(event) {
@@ -314,18 +396,38 @@ async function handleTextMessage(event) {
 
   await logMessage(userId, displayName, 'user', userMessage);
 
+  // 1) ลูกค้ากดรูปสินค้าตัวใดตัวหนึ่ง (ต้องเช็คก่อนตัวอื่น เพราะข้อความมีคำว่า "สินค้า" ปนอยู่)
+  const productReply = findProductReply(userMessage);
+  if (productReply) {
+    await replyMessagesToLine(event.replyToken, [
+      { type: 'text', text: productReply },
+    ]);
+    await logMessage(userId, displayName, 'bot', productReply);
+    return;
+  }
+
+  // 2) ขอดูวิดีโอตัวอย่าง
   if (isAskingForVideo(userMessage)) {
     await replyMessagesToLine(event.replyToken, [buildVideoFlexMessage()]);
     await logMessage(userId, displayName, 'bot', '[ส่งการ์ดตัวอย่างวิดีโอ]');
     return;
   }
 
+  // 3) ขอเลือกเซลล์
   if (isAskingForSales(userMessage)) {
     await replyMessagesToLine(event.replyToken, [buildSalesFlexMessage()]);
     await logMessage(userId, displayName, 'bot', '[ส่งการ์ดเลือกเซลล์]');
     return;
   }
 
+  // 4) ขอดูรายการสินค้าทั้งหมด
+  if (isAskingForProductList(userMessage)) {
+    await replyMessagesToLine(event.replyToken, [buildProductsFlexMessage()]);
+    await logMessage(userId, displayName, 'bot', '[ส่งการ์ดรายการสินค้า]');
+    return;
+  }
+
+  // 5) คำถามทั่วไป ให้ Claude ตอบ
   const botReply = await askClaude(userMessage);
   await replyMessagesToLine(event.replyToken, [
     { type: 'text', text: botReply },
