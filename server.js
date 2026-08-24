@@ -351,7 +351,7 @@ function buildNewsFlexMessage() {
           size: 'full',
           aspectRatio: '1:1',
           aspectMode: 'cover',
-          action: { type: 'uri', label: n.title.slice(0, 40), uri: n.link },
+          action: { type: 'uri', label: 'อ่านข่าวนี้', uri: n.link },
         },
       })),
     },
@@ -648,7 +648,7 @@ async function askClaude(userMessage) {
 }
 
 async function replyMessagesToLine(replyToken, messages) {
-  await fetch('https://api.line.me/v2/bot/message/reply', {
+  const res = await fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -659,6 +659,9 @@ async function replyMessagesToLine(replyToken, messages) {
       messages,
     }),
   });
+  if (!res.ok) {
+    console.error('LINE reply error:', await res.text());
+  }
 }
 
 // เรียก URL นี้ครั้งเดียวหลัง deploy เพื่อสร้าง+ตั้งค่า Rich Menu อัตโนมัติ (6 ปุ่ม)
