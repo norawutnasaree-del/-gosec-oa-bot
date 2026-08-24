@@ -124,6 +124,77 @@ function isAskingForVideo(text) {
   return VIDEO_KEYWORDS.some((kw) => text.includes(kw));
 }
 
+// คำที่ลูกค้าพิมพ์ (หรือกดปุ่มริชเมนู "เลือกเซลล์") แล้วให้ส่งการ์ดเซลล์ทันที
+const SALES_KEYWORDS = ['เลือกเซลล์', 'ติดต่อฝ่ายขาย', 'ขอเซลล์', 'ขอติดต่อฝ่ายขาย'];
+
+function isAskingForSales(text) {
+  return SALES_KEYWORDS.some((kw) => text.includes(kw));
+}
+
+// สร้างการ์ด Flex Carousel รูปเซลล์ กดรูปแล้วเปิดลิงก์เพิ่มเพื่อน LINE
+function buildSalesFlexMessage() {
+  const salesReps = [
+    {
+      name: 'เสาวลักษณ์ (ขวัญ) ศิริมาวรพล',
+      imageUrl:
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/92390.jpg',
+      lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
+    },
+    {
+      name: 'นางสาวนฤทัย ทนอุป (หนุงหนิง)',
+      imageUrl:
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/55945.jpg',
+      lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
+    },
+  ];
+
+  return {
+    type: 'flex',
+    altText: 'เลือกเซลล์ที่ต้องการติดต่อ — GOSEC',
+    contents: {
+      type: 'carousel',
+      contents: salesReps.map((rep) => ({
+        type: 'bubble',
+        size: 'kilo',
+        hero: {
+          type: 'image',
+          url: rep.imageUrl,
+          size: 'full',
+          aspectRatio: '1:1',
+          aspectMode: 'cover',
+          action: { type: 'uri', label: 'เพิ่มเพื่อน', uri: rep.lineUrl },
+        },
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          backgroundColor: '#0A0C14',
+          paddingAll: '18px',
+          spacing: 'xs',
+          contents: [
+            {
+              type: 'text',
+              text: rep.name,
+              color: '#F3EFE6',
+              weight: 'bold',
+              size: 'md',
+              align: 'center',
+              wrap: true,
+            },
+            {
+              type: 'text',
+              text: 'แตะรูปเพื่อเพิ่มเพื่อน LINE',
+              color: '#8B8FA0',
+              size: 'xs',
+              align: 'center',
+              margin: 'sm',
+            },
+          ],
+        },
+      })),
+    },
+  };
+}
+
 // สร้างการ์ด Flex Message สไตล์ดำ-ทอง เหมือนหน้าพรีเมียม
 function buildVideoFlexMessage() {
   return {
@@ -214,6 +285,12 @@ async function handleTextMessage(event) {
   if (isAskingForVideo(userMessage)) {
     await replyMessagesToLine(event.replyToken, [buildVideoFlexMessage()]);
     await logMessage(userId, displayName, 'bot', '[ส่งการ์ดตัวอย่างวิดีโอ]');
+    return;
+  }
+
+  if (isAskingForSales(userMessage)) {
+    await replyMessagesToLine(event.replyToken, [buildSalesFlexMessage()]);
+    await logMessage(userId, displayName, 'bot', '[ส่งการ์ดเลือกเซลล์]');
     return;
   }
 
