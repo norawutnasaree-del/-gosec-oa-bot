@@ -135,15 +135,17 @@ function isAskingForSales(text) {
 function buildSalesFlexMessage() {
   const salesReps = [
     {
-      name: 'เสาวลักษณ์ (ขวัญ) ศิริมาวรพล',
+      name: 'เสาวลักษณ์ (ขวัญ)',
+      lastName: 'ศิริมาวัชรพล',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/92390.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/1.jpg',
       lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
     },
     {
-      name: 'นางสาวนฤทัย ทนอุป (หนุงหนิง)',
+      name: 'นางสาวนฤทัย ทนอุป',
+      lastName: '(หนุงหนิง)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/55945.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/2.jpg',
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
   ];
@@ -168,12 +170,12 @@ function buildSalesFlexMessage() {
           type: 'box',
           layout: 'vertical',
           backgroundColor: '#0B1F3F',
-          paddingAll: '20px',
-          spacing: 'xs',
+          paddingAll: '22px',
+          spacing: 'none',
           contents: [
             {
               type: 'text',
-              text: 'GOSEC · SALES',
+              text: 'G O S E C   ·   S A L E S',
               color: '#C9A227',
               size: 'xxs',
               weight: 'bold',
@@ -181,26 +183,42 @@ function buildSalesFlexMessage() {
             },
             {
               type: 'separator',
-              color: '#C9A22755',
-              margin: 'sm',
+              color: '#C9A227',
+              margin: 'md',
             },
             {
               type: 'text',
               text: rep.name,
               color: '#FFFFFF',
               weight: 'bold',
-              size: 'md',
+              size: 'lg',
               align: 'center',
               wrap: true,
-              margin: 'md',
+              margin: 'lg',
+            },
+            {
+              type: 'text',
+              text: rep.lastName,
+              color: '#E4C878',
+              style: 'italic',
+              size: 'sm',
+              align: 'center',
+              wrap: true,
+              margin: 'xs',
+            },
+            {
+              type: 'separator',
+              color: '#C9A22740',
+              margin: 'lg',
             },
             {
               type: 'text',
               text: 'แตะรูปเพื่อเพิ่มเพื่อน LINE',
               color: '#9FB3D1',
-              size: 'xs',
+              style: 'italic',
+              size: 'xxs',
               align: 'center',
-              margin: 'sm',
+              margin: 'md',
             },
           ],
         },
