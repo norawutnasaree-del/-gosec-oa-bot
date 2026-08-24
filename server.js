@@ -306,7 +306,7 @@ function buildSalesFlexMessage() {
 }
 
 // ===== สินค้า 6 ตัว =====
-const PRODUCT_LIST_KEYWORDS = ['สินค้าเรา', 'มีสินค้า', 'ดูสินค้า', 'สินค้าและบริการ'];
+const PRODUCT_LIST_KEYWORDS = ['สินค้าเรา', 'มีสินค้า', 'ดูสินค้า', 'สินค้าและบริการ', 'สินค้า'];
 
 function isAskingForProductList(text) {
   return PRODUCT_LIST_KEYWORDS.some((kw) => text.includes(kw));
