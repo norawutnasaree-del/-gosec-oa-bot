@@ -317,37 +317,37 @@ const PRODUCTS = [
     name: 'Gosec by CTMR',
     description: 'กรอบความมั่นคงปลอดภัยไซเบอร์',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/1.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/1.jpg?v=2',
   },
   {
     name: 'Omnix VCR',
     description: 'ห้องประชุมและบัญชาการออนไลน์',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/2.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/2.jpg?v=2',
   },
   {
     name: 'Omnix Sync',
     description: 'ระบบรวมฐานข้อมูลของ อบจ.',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/3.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/3.jpg?v=2',
   },
   {
     name: 'Omnix Sentra',
     description: 'ระบบรวมกล้องวงจรปิดและ AI CCTV',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/4.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/4.jpg?v=2',
   },
   {
     name: 'Omnix Stream',
     description: 'ระบบถ่ายทอดสด และสื่อสารสาธารณะ',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/5.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/5.jpg?v=2',
   },
   {
     name: 'Omnix Wireless Lastmile',
     description: 'เครือข่ายวงจรปิดถึงบ้านผู้ป่วย',
     imageUrl:
-      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/6.jpg',
+      'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/6.jpg?v=2',
   },
 ];
 
