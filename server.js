@@ -213,8 +213,8 @@ function isAskingForSales(text) {
 function buildSalesFlexMessage() {
   const salesReps = [
     {
-      name: 'เสาวลักษณ์ (ขวัญ)',
-      lastName: 'ศิริมาวัชรพล',
+      name: 'เสาวลักษณ์ ศิริมาวัชรพล',
+      lastName: '(ขวัญ)',
       imageUrl:
         'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales1.jpg.jpg',
       lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
@@ -227,11 +227,25 @@ function buildSalesFlexMessage() {
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
     {
-      name: 'นางสาวสุพรรณี สัณฐิติ',
+      name: 'นางสาวสุพรรณี สัณฑิติ',
       lastName: '(ปูเป้)',
       imageUrl:
         'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale3.jpg',
       lineUrl: 'https://line.me/ti/p/2EksyN66ZK',
+    },
+    {
+      name: 'บุญญฤทธิ์ บุญกิตติพร',
+      lastName: '(ซัน)',
+      imageUrl:
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale4.jpg',
+      lineUrl: 'https://line.me/ti/p/fYfeIt8W0y',
+    },
+    {
+      name: 'คุณเอ็ม',
+      lastName: '',
+      imageUrl:
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale5.jpg',
+      lineUrl: null, // ยังไม่มีลิงก์ — รอเพิ่มทีหลัง การ์ดนี้จะกดไม่ได้ชั่วคราว
     },
   ];
 
@@ -249,7 +263,9 @@ function buildSalesFlexMessage() {
           size: 'full',
           aspectRatio: '1:1',
           aspectMode: 'cover',
-          action: { type: 'uri', label: 'เพิ่มเพื่อน', uri: rep.lineUrl },
+          ...(rep.lineUrl
+            ? { action: { type: 'uri', label: 'เพิ่มเพื่อน', uri: rep.lineUrl } }
+            : {}),
         },
         body: {
           type: 'box',
