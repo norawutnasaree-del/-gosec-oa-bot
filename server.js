@@ -555,6 +555,24 @@ function findProductResponse(text) {
   return { type: 'text', text: replyText };
 }
 
+// ===== ปุ่ม "ลูกค้า" — ส่งรูปเดี่ยว =====
+const CUSTOMER_KEYWORDS = ['ลูกค้า'];
+
+function isAskingForCustomer(text) {
+  return CUSTOMER_KEYWORDS.some((kw) => text.includes(kw));
+}
+
+const CUSTOMER_IMAGE_URL =
+  'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/customer.jpg';
+
+function buildCustomerImageMessage() {
+  return {
+    type: 'image',
+    originalContentUrl: CUSTOMER_IMAGE_URL,
+    previewImageUrl: CUSTOMER_IMAGE_URL,
+  };
+}
+
 async function handleTextMessage(event) {
   const userId = event.source.userId;
   const userMessage = event.message.text;
@@ -595,6 +613,13 @@ async function handleTextMessage(event) {
   if (isAskingForNews(userMessage)) {
     await replyMessagesToLine(event.replyToken, [buildNewsFlexMessage()]);
     await logMessage(userId, displayName, 'bot', '[ส่งการ์ดข่าวสาร]');
+    return;
+  }
+
+  // 5) กดปุ่ม "ลูกค้า" — ส่งรูปเดี่ยวกลับทันที
+  if (isAskingForCustomer(userMessage)) {
+    await replyMessagesToLine(event.replyToken, [buildCustomerImageMessage()]);
+    await logMessage(userId, displayName, 'bot', '[ส่งรูปลูกค้า]');
     return;
   }
 
