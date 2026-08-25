@@ -226,6 +226,13 @@ function buildSalesFlexMessage() {
         'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales2.jpg.jpg',
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
+    {
+      name: 'นางสาวสุพรรณี สัณฐิติ',
+      lastName: '(ปูเป้)',
+      imageUrl:
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale3.jpg',
+      lineUrl: 'https://line.me/ti/p/2EksyN66ZK',
+    },
   ];
 
   return {
