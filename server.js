@@ -216,14 +216,14 @@ function buildSalesFlexMessage() {
       name: 'เสาวลักษณ์ ศิริมาวัชรพล',
       lastName: '(ขวัญ)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales1.jpg.jpg?v=2',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale1.jpg.jpg?v=2',
       lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
     },
     {
       name: 'นางสาวนฤทัย ทนอุป',
       lastName: '(หนุงหนิง)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales2.jpg.jpg?v=2',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale2.jpg.jpg?v=2',
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
     {
