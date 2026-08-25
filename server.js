@@ -563,7 +563,7 @@ function isAskingForCustomer(text) {
 }
 
 const CUSTOMER_IMAGE_URL =
-  'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/customer.jpg';
+  'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/cutomer.jpg';
 
 function buildCustomerImageMessage() {
   return {
