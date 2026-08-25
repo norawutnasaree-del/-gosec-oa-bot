@@ -216,14 +216,14 @@ function buildSalesFlexMessage() {
       name: 'เสาวลักษณ์ ศิริมาวัชรพล',
       lastName: '(ขวัญ)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales1.jpg.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales1.jpg.jpg?v=2',
       lineUrl: 'https://line.me/ti/p/pXXB6cU4tJ',
     },
     {
       name: 'นางสาวนฤทัย ทนอุป',
       lastName: '(หนุงหนิง)',
       imageUrl:
-        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales2.jpg.jpg',
+        'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sales2.jpg.jpg?v=2',
       lineUrl: 'https://line.me/ti/p/4cuhA5-4Py',
     },
     {
@@ -241,11 +241,11 @@ function buildSalesFlexMessage() {
       lineUrl: 'https://line.me/ti/p/fYfeIt8W0y',
     },
     {
-      name: 'คุณเอ็ม',
-      lastName: '–',
+      name: 'ดร.อัมรินทร์ เพชรชู',
+      lastName: '(เอ็ม)',
       imageUrl:
         'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale5.jpg',
-      lineUrl: null, // ยังไม่มีลิงก์ — รอเพิ่มทีหลัง การ์ดนี้จะกดไม่ได้ชั่วคราว
+      lineUrl: 'https://line.me/ti/p/xqLFXF5G8v',
     },
   ];
 
