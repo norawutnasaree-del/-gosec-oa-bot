@@ -242,7 +242,7 @@ function buildSalesFlexMessage() {
     },
     {
       name: 'คุณเอ็ม',
-      lastName: '',
+      lastName: '–',
       imageUrl:
         'https://raw.githubusercontent.com/norawutnasaree-del/-gosec-oa-bot/main/sale5.jpg',
       lineUrl: null, // ยังไม่มีลิงก์ — รอเพิ่มทีหลัง การ์ดนี้จะกดไม่ได้ชั่วคราว
