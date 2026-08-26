@@ -725,7 +725,7 @@ function isAskingForFaq(text) {
 // รายการคำถาม 13 ข้อ — answer และ videoUrl เป็น null รอใส่ข้อมูลจริงทีหลัง
 // วิธีเติมคำตอบ: ใส่ข้อความใน answer, ถ้ามีวิดีโอด้วยใส่ลิงก์ใน videoUrl (ไม่มีก็ปล่อย null ได้)
 const FAQ_ITEMS = [
-  { number: 1, question: 'GOSEC สามารถทำอะไรได้บ้าง', answer: null, videoUrl: null },
+  { number: 1, question: 'GOSEC สามารถทำอะไรได้บ้าง', answer: null, videoUrl: 'https://youtu.be/8GOI2tXfQ40' },
   { number: 2, question: 'สามารถป้องกันภัยไซเบอร์แบบไหนได้บ้าง', answer: null, videoUrl: null },
   { number: 3, question: 'สามารถตรวจจับการโจมตีได้อย่างไร', answer: null, videoUrl: null },
   { number: 4, question: 'สามารถป้องกัน Ransomware ได้หรือไม่', answer: null, videoUrl: null },
@@ -852,7 +852,21 @@ function findFaqResponse(text) {
   const item = FAQ_ITEMS.find((f) => f.number === questionNumber);
   if (!item) return null;
 
-  // ยังไม่มีคำตอบ — ตอบขอโทษชั่วคราวไปก่อน
+  // มีวิดีโอ → ส่งการ์ดวิดีโอทันที (ไม่ต้องรอมีคำตอบข้อความ)
+  if (item.videoUrl) {
+    return {
+      type: 'flex',
+      flex: buildProductVideoFlexMessage(
+        {
+          name: item.question,
+          description: item.answer || 'รับชมข้อมูลได้จากวิดีโอด้านล่างเลยค่ะ',
+        },
+        item.videoUrl
+      ),
+    };
+  }
+
+  // ไม่มีวิดีโอ + ยังไม่มีคำตอบ — ตอบขอโทษชั่วคราวไปก่อน
   if (!item.answer) {
     return {
       type: 'text',
@@ -860,18 +874,7 @@ function findFaqResponse(text) {
     };
   }
 
-  // มีคำตอบแล้ว + มีวิดีโอ → ส่งการ์ดวิดีโอ
-  if (item.videoUrl) {
-    return {
-      type: 'flex',
-      flex: buildProductVideoFlexMessage(
-        { name: item.question, description: item.answer },
-        item.videoUrl
-      ),
-    };
-  }
-
-  // มีคำตอบแล้ว ไม่มีวิดีโอ → ตอบข้อความ
+  // มีคำตอบข้อความ ไม่มีวิดีโอ → ตอบข้อความ
   return { type: 'text', text: item.answer };
 }
 
