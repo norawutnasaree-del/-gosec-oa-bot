@@ -831,9 +831,25 @@ function buildFaqFlexMessage() {
 
 // เช็คว่าลูกค้ากดคำถามข้อไหน แล้วคืนสิ่งที่จะตอบ
 function findFaqResponse(text) {
-  const match = text.match(/^สอบถามข้อที่ (\d+)$/);
-  if (!match) return null;
-  const item = FAQ_ITEMS.find((f) => f.number === Number(match[1]));
+  const trimmed = text.trim();
+
+  // แบบที่ 1: แตะปุ่มในการ์ด (ส่งข้อความ "สอบถามข้อที่ N" มาอัตโนมัติ)
+  let questionNumber = null;
+  const tapMatch = trimmed.match(/^สอบถามข้อที่ (\d+)$/);
+  if (tapMatch) {
+    questionNumber = Number(tapMatch[1]);
+  }
+
+  // แบบที่ 2: ลูกค้าพิมพ์เลขเปล่าๆ เอง (เช่น "1", "5", "13")
+  if (questionNumber === null && /^\d+$/.test(trimmed)) {
+    const n = Number(trimmed);
+    if (n >= 1 && n <= FAQ_ITEMS.length) {
+      questionNumber = n;
+    }
+  }
+
+  if (questionNumber === null) return null;
+  const item = FAQ_ITEMS.find((f) => f.number === questionNumber);
   if (!item) return null;
 
   // ยังไม่มีคำตอบ — ตอบขอโทษชั่วคราวไปก่อน
